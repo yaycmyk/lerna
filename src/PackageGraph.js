@@ -5,13 +5,6 @@ export class PackageGraphNode {
     this.package = pkg;
     this.dependencies = [];
   }
-
-  isVersionSatisfied(depVersion) {
-    // private repo usage doesn't conform to normal semver ranges, so we have to branch and do explicit checks
-    return semver.valid(depVersion)
-           ? semver.satisfies(this.package.version, depVersion)
-           : depVersion === this.package.version;
-  }
 }
 
 export default class PackageGraph {
@@ -36,7 +29,7 @@ export default class PackageGraph {
         const depVersion = dependencies[depName];
         const packageNode = this.nodesByName[depName];
 
-        if (packageNode && packageNode.isVersionSatisfied(depVersion)) {
+        if (packageNode && packageNode.package.hasMatchingDependency({version: depVersion})) {
           node.dependencies.push(depName);
         }
       }

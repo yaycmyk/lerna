@@ -93,8 +93,13 @@ export default class Package {
       return false;
     }
 
-    // check if semantic versions are compatible
-    if (semver.satisfies(actualVersion, expectedVersion)) {
+    if (semver.valid(actualVersion) && semver.valid(expectedVersion)) {
+      // check if semantic versions are compatible
+      if (semver.satisfies(actualVersion, expectedVersion)) {
+        return true;
+      }
+    } else if (actualVersion === expectedVersion) {
+      // fallback in the case of private repos where the version strings are not semver-compatible
       return true;
     }
 
